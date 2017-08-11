@@ -1,0 +1,13 @@
+			span{
+				display: inline-block;
+				width: 200px;
+				border: 1px solid #eee;
+				margin: 10px;
+				padding: 10px;
+			}
+			
+			div.link_refresh{
+				color: #00f;
+				cursor: pointer;
+				text-decoration: underline;
+			}
