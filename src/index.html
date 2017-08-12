@@ -9,12 +9,19 @@
 		<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
 	</head>
 	<body>
-		<div id="buildContainer">
-			Coin: <input type="text" id="addCoin" /> <br />
-			Amount: <input type="text" id="addAmount" /> <br />
-			<div id="buildReview"></div>
-			<input type="button" value="Add to Porfolio" />
+		<div id="localStorageNo" style="display:block;">
+			This app requires a browser with localstorage.
 		</div>
-		<div id="portfolioContainer"></div>
+		<div id="localStorageYes" style="display:none;">
+			<h1>Crypto Currency Portfolio Tracker</h1>
+			<div id="buildContainer">
+				Coin: <input type="text" id="addCoin" /> <br />
+				Amount: <input type="text" id="addAmount" /> <br />
+				Cost Basis: <input type="text" id="addCostBasis" /> <br />
+				<div id="buildReview"></div>
+				<input id="addToPortfolioBtn" type="button" value="Add to Porfolio" />
+			</div>
+			<div id="portfolioContainer"></div>
+		</div>
 	</body>
 </html>

@@ -1,50 +1,87 @@
 var cryptoCurrency, availableTags = [];
 
-jQuery( document ).ready( function() {
+$( document ).ready( function() {
+	var hasStorage = typeof( Storage ) !== "undefined";
 	
-	jQuery.ajax({
-		url: 'https://api.coinmarketcap.com/v1/ticker/',
-		dataType: 'json',
-		success: function( results ) {
-			var i, l;
-			
-			cryptoCurrency = results;
-			
-			for( i = 0, l = results.length; i < l; i += 1 ) {
-				availableTags.push( results[ i ].id );
+	jQuery( '#localStorageNo' ).toggle( !hasStorage );
+	jQuery( '#localStorageYes' ).toggle( hasStorage );
+	
+	if( hasStorage ) {
+		var buildPortfolio = function() {
+			var i, str = '', key, value;
+			for( i = 0, l = localStorage.length; i < l; i += 1 ) {
+
+				key = localStorage.key(i);
+				value = localStorage[key];
+				str += '<div>' + key + " => " + value + '</div>';
+
 			}
-		}
-	});
-	
-	jQuery( '#addCoin' ).autocomplete({
-      source: availableTags
-    });
-	
-	var findCryptoCurrency = function( str ) {
-		var i, l, ret = false;
+			
+			$( '#portfolioContainer' ).empty().html( str );
+		};
 		
-		for( i = 0, l = cryptoCurrency.length; i < l; i += 1 ) {
-			if( cryptoCurrency[ i ].id == str ) {
-				ret = cryptoCurrency[ i ];
-				break;
+		$.ajax( {
+			url: 'https://api.coinmarketcap.com/v1/ticker/',
+			dataType: 'json',
+			success: function( results ) {
+				var i, l;
+				
+				cryptoCurrency = results;
+				
+				for( i = 0, l = results.length; i < l; i += 1 ) {
+					availableTags.push( results[ i ].id );
+				}
 			}
-		}
+		} );
 		
-		return ret;
-	};
-	
-	jQuery( '#addAmount' ).on( 'keydown keyup keypress', function() {
-		var find = findCryptoCurrency( jQuery( '#addCoin' ).val() ),
-			val, buildReview;
+		$( '#addCoin' ).autocomplete( {
+		  source: availableTags
+		} );
+		
+		var findCryptoCurrency = function( str ) {
+			var i, l, ret = false;
 			
-		if( find !== false ) {
-			val = parseFloat( jQuery( this ).val() );
-			
-			buildReview = jQuery( '#buildReview' ).empty();
-			
-			if( val > 0 ) {
-				buildReview.html("Add Value: $" + ( val * parseFloat( find.price_usd ) ).toFixed( 2 ) );
+			for( i = 0, l = cryptoCurrency.length; i < l; i += 1 ) {
+				if( cryptoCurrency[ i ].id == str ) {
+					ret = cryptoCurrency[ i ];
+					break;
+				}
 			}
-		}
-	} );
+			
+			return ret;
+		};
+		
+		$( '#addAmount' ).on( 'keydown keyup keypress', function() {
+			var find = findCryptoCurrency( $( '#addCoin' ).val() ),
+				val, buildReview, str;
+				
+			if( find !== false ) {
+				val = parseFloat( $( this ).val() );
+				
+				buildReview = $( '#buildReview' ).empty();
+				
+				if( val > 0 ) {
+					str = 'Add Value: $' + ( val * parseFloat( find.price_usd ) ).toFixed( 2 );
+					str += '<br />Cost Basis: x'
+					str += '<br />Gain/Loss: y'
+					buildReview.html( str );
+				}
+			}
+		} );
+		
+		$( '#addToPortfolioBtn' ).click( function() {
+			var coin = $( '#addCoin' ).val(),
+				amount = parseFloat( $( '#addAmount' ).val() ),
+				costBasis = parseFloat( $( '#addCostBasis' ).val() );
+				
+			if( coin && amount && costBasis ) {
+				localStorage.setItem( coin, amount );
+				localStorage.setItem( coin +"costBasis", costBasis );
+			}
+			
+			buildPortfolio();
+		} );
+		
+		buildPortfolio();
+	}
 } );
