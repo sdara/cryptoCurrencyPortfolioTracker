@@ -1,7 +1,7 @@
 var cryptoCurrency, availableTags = [];
 
 $( document ).ready( function() {
-	var hasStorage = typeof( Storage ) !== "undefined";
+	var hasStorage = typeof( Storage ) !== 'undefined';
 	
 	jQuery( '#localStorageNo' ).toggle( !hasStorage );
 	jQuery( '#localStorageYes' ).toggle( hasStorage );
@@ -13,7 +13,7 @@ $( document ).ready( function() {
 
 				key = localStorage.key(i);
 				value = localStorage[key];
-				str += '<div>' + key + " => " + value + '</div>';
+				str += '<div>' + key + ' => ' + value + '</div>';
 
 			}
 			
@@ -76,10 +76,21 @@ $( document ).ready( function() {
 				
 			if( coin && amount && costBasis ) {
 				localStorage.setItem( coin, amount );
-				localStorage.setItem( coin +"costBasis", costBasis );
+				localStorage.setItem( coin + '-costBasis', costBasis );
+				$( '#addCoin, #addAmount, #addCostBasis' ).val( '' );
+			} else {
+				alert( 'Coin, amount, and cost basis required.' )
 			}
 			
 			buildPortfolio();
+		} );
+		
+		$( '#clearPortfolioBtn' ).click( function() {
+			if( confirm( 'Reset portfolio?' ) ) {
+				localStorage.clear();
+				$( '#buildReview' ).empty();
+				buildPortfolio();
+			}
 		} );
 		
 		buildPortfolio();
